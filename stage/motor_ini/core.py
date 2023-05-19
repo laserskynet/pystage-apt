@@ -13,11 +13,13 @@ def find_stages():
     # each identified serial port is expressed within a tuple, i.e. ('','','').
  
     # The loop below will find all identified stage controllers and
-    for dev in usb.core.find(find_all=True, custom_match= lambda x: x.bDeviceClass != 9):
+    for dev in usb.core.find(find_all=True, custom_match= lambda x: x.bDeviceClass != 9 and x.idVendor==0x0403 and x.idProduct==0xFAF0 and x.product == 'Brushed Motor Controller'):
+    # for dev in usb.core.find(find_all=True, custom_match= lambda x: x.bDeviceClass != 9):
         if platform.system() == 'Linux':
             # this is to check if the operating system is Linux, if not the code won't work. N.B. codename of MacOS
             # is Darwin.
-            port_candidates = [x[0] for x in serial_ports if x[2].get('SER', None) == dev.serial_number]
+            port_candidates = [x[0] for x in serial_ports if x[2] and x[2].get('SER', None) == dev.serial_number]
+            # port_candidates = [x[0] for x in serial_ports if x[2].get('SER', None) == dev.serial_number]
             # expected value for port_candidates is:
             # ['/dev/ttyUSB0'], which is the serial port to communicate with the controller through
         
@@ -46,11 +48,14 @@ def find_stages():
             # generator type
             yield stage
             
+     
+        # Example device:
+        # Manufacturer                1. Thorlabs
+        # Product                     2. APT DC Motor Controller
+        # Serial No.                  3. 83844171
         
 if __name__ == '__main__':
-    print(list(find_stages()))
+    find_stages()
+    # print(list(find_stages()))
 
-# Example device:
-# Manufacturer                1. Thorlabs
-# Product                     2. APT DC Motor Controller
-# Serial No.                  3. 83844171
+

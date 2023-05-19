@@ -98,7 +98,7 @@ class Port:
         
 
     def __del__(self):
-        #print("Destructed: {0!r}".format(self))
+        print("port.py Destructed: {0!r}".format(self))
         self._thread_worker.join()
             
     def send_message(self, msg):

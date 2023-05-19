@@ -221,7 +221,7 @@ class MotorCtrl:
             
         print("Motor motion: {0}".format(' and '.join(flags)))
         print("Velocity setting: moving velocity is between {0.min_vel:0.3f}-{0.max_vel:0.3f}{0.units}/s and acceleration is {0.accn:0.3f}{0.units}/s²".format(self))
-        print("Homing setting: homing velocity is between {0.home_vel:0.3f}{0.units}/s {0.home_dir_str}, limit switch is {0.home_limit_switch} and offset distance is {0.home_offset_dist:0.3f} {0.units}".format(self))    
+        print("Homing setting: homing velocity is between {0.home_vel:0.3f}{0.units}/s {0.home_dir_str}, limit switch is {0.home_limit_switch} and offset distance is {0.home_offset_dist:0.3f} {0.units}".format(self)+ '\n')    
     
     @property
     def pos_lim(self):
@@ -751,9 +751,9 @@ class MotorCtrl:
         """
         # we now abondon the using message bits given by Thorlabs as it's pretty much not reliable. Sometimes status_homed returns False when
         # the stage is already homed and sometimes the other way around. So instead we now use position to verify if the stage is homed.
-        # self._wait_for_properties(('_state_status_bits', ), timeout = 3, message = MGMSG_MOT_REQ_DCSTATUSUPDATE(chan_ident = self._chan_ident))
-        # return bool(self._state_status_bits & 0x00000400)
-        return self.pos == 0.0
+        self._wait_for_properties(('_state_status_bits', ), timeout = 3, message = MGMSG_MOT_REQ_DCSTATUSUPDATE(chan_ident = self._chan_ident))
+        return bool(self._state_status_bits & 0x00000400)
+        # return self.pos == 0.0
     
     @property
     def status_in_motion_homing(self):
@@ -1237,8 +1237,8 @@ class MotorCtrl:
         velocity =    self._conf_home_vel
         zero_offset = self._conf_home_zero_offset
         
-        return (direction.value, lim_switch.value, velocity.value,
-                zero_offset.value)
+        return (direction, lim_switch, velocity,
+                zero_offset)
     
     def set_home_vel(self, new_value):
         """
@@ -1366,17 +1366,17 @@ class MotorCtrl:
         home_check
             
         '''
-        if self.pos == 0:
-            return None
-        else:
+        # if self.pos == 0:
+        #     return None
+        # else:
             
-            self._port.send_message(MGMSG_MOT_MOVE_HOME(chan_ident = self._chan_ident))
-            # we make sure that the controller waits until homing is completed by adding an
-            # 'if' loop to call property home_check.
-            if not blocking:
-                check_homed = self.home_check
-                if check_homed:
-                    return None
+        self._port.send_message(MGMSG_MOT_MOVE_HOME(chan_ident = self._chan_ident))
+        # we make sure that the controller waits until homing is completed by adding an
+        # 'if' loop to call property home_check.
+        if not blocking:
+            check_homed = self.home_check
+            if check_homed:
+                return None
             
 #####  SYSTEM PARAMETERS  ###############################################################################################
             
@@ -1538,7 +1538,7 @@ class MotorCtrl:
         object have been deleted.
         
         '''
-        print("Destructed: {0!r}".format(self._name))
+        # print("Destructed: {0!r}".format(self._name))
         
     def __repr__(self):
         return '{0!r}'.format(self._port)
