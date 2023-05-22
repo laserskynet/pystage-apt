@@ -41,7 +41,9 @@ setup(name = 'pystage_apt',
       classifiers = CLASSIFIERS,
       python_requires = '>=3',
       data_files = [('',['LICENSE.txt'])],
-      zip_safe = False
+      zip_safe = False,
+      package_data = {"stage/motor_ctrl": ["*.ini",]},
+      include_package_data = True,
 )
       
       
