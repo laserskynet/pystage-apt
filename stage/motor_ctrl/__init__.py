@@ -100,8 +100,7 @@ class MotorCtrl:
         self._port.send_message(MGMSG_MOD_SET_CHANENABLESTATE(chan_ident = self._chan_ident, chan_enable_state = 0x01))
         
         self._extr_str = make_tuple(self.__repr__().strip('SingleControllerPort'))
-        print('Success: Stage {0} is detected and a controller with serial number {1}'.format(self._name,self._extr_str[1]), \
-              'is connected via port',self._extr_str[0],'\n')     
+        # print('Success: Stage {0} is detected and a controller with serial number {1}'.format(self._name,self._extr_str[1]), \ 'is connected via port',self._extr_str[0],'\n') # AWK -- removal
         
         #STATUS UPDATE
         self._state_position = None
