@@ -96,10 +96,10 @@ class Port:
         
         self._thread_worker_initialized.wait()
         
-
-    def __del__(self):
-        # print("port.py Destructed: {0!r}".format(self)) # AWK change
-        self._thread_worker.join(.00001)
+    # AWK change
+    # def __del__(self):
+        # print("port.py Destructed: {0!r}".format(self))
+        # self._thread_worker.join(.00001)
             
     def send_message(self, msg):
         with self._lock:
